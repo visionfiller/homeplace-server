@@ -1,0 +1,42 @@
+[
+    {
+        "model": "homeplaceapi.area",
+        "pk": 1,
+        "fields": {
+            "city": 1,
+            "neighborhood": "Green Hills"
+        }
+    },
+    {
+        "model": "homeplaceapi.area",
+        "pk": 2,
+        "fields": {
+            "city": 1,
+            "neighborhood": "Germantown"
+        }
+    },
+    {
+        "model": "homeplaceapi.area",
+        "pk": 3,
+        "fields": {
+            "city": 1,
+            "neighborhood": "The Gulch"
+        }
+    },
+    {
+        "model": "homeplaceapi.area",
+        "pk": 4,
+        "fields": {
+            "city": 1,
+            "neighborhood": "Belle Meade"
+        }
+    },
+    {
+        "model": "homeplaceapi.area",
+        "pk": 5,
+        "fields": {
+            "city": 1,
+            "neighborhood": "East Nashville"
+        }
+    }
+]

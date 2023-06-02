@@ -1,0 +1,26 @@
+[
+    {
+        "model": "homeplaceapi.swapper",
+        "pk": 1,
+        "fields": {
+            "user": 1,
+            "area": 1
+        }
+    },
+    {
+        "model": "homeplaceapi.swapper",
+        "pk": 2,
+        "fields": {
+            "user": 2,
+            "area": 1
+        }
+    },
+    {
+        "model": "homeplaceapi.swapper",
+        "pk": 3,
+        "fields": {
+            "user": 3,
+            "area": 1
+        }
+    }
+]

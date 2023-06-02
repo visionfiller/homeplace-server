@@ -1,0 +1,29 @@
+[
+    {
+        "model": "homeplaceapi.paymenttype",
+        "pk": 1,
+        "fields": {
+            "swapper": 1,
+            "acct_number": 77777777,
+            "merchant_name": "Bank of the Aussies "
+        }
+    },
+    {
+        "model": "homeplaceapi.paymenttype",
+        "pk": 2,
+        "fields": {
+            "swapper": 1,
+            "acct_number": 48345348577,
+            "merchant_name": "DoggoBank"
+        }
+    },
+    {
+        "model": "homeplaceapi.paymenttype",
+        "pk": 3,
+        "fields": {
+            "swapper": 2,
+            "acct_number": 4834534857333,
+            "merchant_name": "PoppyBank"
+        }
+    }
+]
