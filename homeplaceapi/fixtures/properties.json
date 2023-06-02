@@ -1,0 +1,41 @@
+[
+    {
+        "model": "homeplaceapi.property",
+        "pk": 1,
+        "fields": {
+            "owner": 1,
+            "area": 1,
+            "address": "526 Belair Way",
+            "image": "https://cdn.gobankingrates.com/wp-content/uploads/2019/07/Beautiful-luxury-home-exterior-iStock-1054759884.jpg?quality=80",
+            "yard": true,
+            "pool": true,
+            "square_footage": 3000
+        }
+    },
+    {
+        "model": "homeplaceapi.property",
+        "pk": 2,
+        "fields": {
+            "owner": 3,
+            "area": 1,
+            "address": "77 Cumberland Way",
+            "image": "https://www.houseplans.net/uploads/plans/16350/elevations/23817-768.jpg?v=0",
+            "yard": true,
+            "pool": false,
+            "square_footage": 4000
+        }
+    },
+    {
+        "model": "homeplaceapi.property",
+        "pk": 3,
+        "fields": {
+            "owner": 2,
+            "area": 1,
+            "address": "7 Ocean Way",
+            "image": "https://th.bing.com/th/id/R.bbc4fa716884111de70d31452c1d8146?rik=HPExUuB5LR2%2bMQ&riu=http%3a%2f%2fd2mpm7i8z005ig.cloudfront.net%2fstatic%2f2016%2f06%2f22151335%2fcoastal-living-turquoise-roof-beach-house-exterior.jpg&ehk=aYi4CpXPntFG6xUO%2fiMimmFyKe07elcNif2j7OGb4RE%3d&risl=&pid=ImgRaw&r=0",
+            "yard": true,
+            "pool": true,
+            "square_footage": 2000
+        }
+    }
+]

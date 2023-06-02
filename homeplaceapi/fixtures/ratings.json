@@ -1,0 +1,32 @@
+[
+    {
+        "model": "homeplaceapi.rating",
+        "pk": 1,
+        "fields": {
+            "swapper": 2,
+            "property": 1,
+            "score": 10,
+            "review": "I love the charm and layout!"
+        }
+    },
+    {
+        "model": "homeplaceapi.rating",
+        "pk": 2,
+        "fields": {
+            "swapper": 1,
+            "property": 3,
+            "score": 10,
+            "review": "Love the access to the beach"
+        }
+    },
+    {
+        "model": "homeplaceapi.rating",
+        "pk": 2,
+        "fields": {
+            "swapper": 3,
+            "property": 2,
+            "score": 2,
+            "review": "The neighbors were loud"
+        }
+    }
+]

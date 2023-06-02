@@ -1,0 +1,34 @@
+[
+    {
+        "model": "homeplaceapi.favorite",
+        "pk": 1,
+        "fields": {
+            "swapper": 1,
+            "property": 2
+        }
+    },
+    {
+        "model": "homeplaceapi.favorite",
+        "pk": 2,
+        "fields": {
+            "swapper": 1,
+            "property": 3
+        }
+    },
+    {
+        "model": "homeplaceapi.favorite",
+        "pk": 3,
+        "fields": {
+            "swapper": 2,
+            "property": 1
+        }
+    },
+    {
+        "model": "homeplaceapi.favorite",
+        "pk": 4,
+        "fields": {
+            "swapper": 3,
+            "property": 2
+        }
+    }
+]
