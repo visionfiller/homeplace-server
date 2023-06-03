@@ -39,6 +39,7 @@ class PropertyView(ViewSet):
         owner_id = request.query_params.get('owner', None)
         has_yard = request.query_params.get('has_yard', None)
         has_pool = request.query_params.get('has_pool', None)
+        area_id = request.query_params.get('area', None)
         min_sq_feet = request.query_params.get('min_sq_feet', None)
         if owner_id is not None:
             properties = properties.filter(owner=owner_id)
@@ -48,6 +49,8 @@ class PropertyView(ViewSet):
             properties = properties.filter(pool=True)
         if min_sq_feet is not None:
             properties = properties.filter(square_footage__gte=min_sq_feet)
+        if area_id is not None:
+            properties = properties.filter(area=area_id)
         for property_ in properties:
             try:
                 swapper = Swapper.objects.get(user=request.auth.user)
@@ -106,11 +109,11 @@ class PropertyView(ViewSet):
 #             varietal_region.save()
 
 #             return Response(None, status=status.HTTP_204_NO_CONTENT)
-#     def destroy(self, request, pk):
-#         """delete varietal region"""
-#         varietal_region = VarietalRegion.objects.get(pk=pk)
-#         varietal_region.delete()
-#         return Response(None, status=status.HTTP_204_NO_CONTENT) 
+    def destroy(self, request, pk):
+        """delete property"""
+        property_ = Property.objects.get(pk=pk)
+        property_.delete()
+        return Response(None, status=status.HTTP_204_NO_CONTENT) 
 
     @action(methods=['post'], detail=True)    
     def favorite(self, request, pk):

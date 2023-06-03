@@ -28,7 +28,8 @@ def login_user(request):
         data = {
             'valid': True,
             'token': token.key,
-            'swapper_id': authenticated_user.swapper.id
+            'swapper_id': authenticated_user.swapper.id,
+            'area_id': authenticated_user.swapper.area.id
         }
         return Response(data)
     else:
