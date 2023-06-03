@@ -4,7 +4,7 @@ from homeplaceapi.models import Property, Swapper
 class PropertyOwnerSerializer(serializers.ModelSerializer):
     class Meta: 
         model= Swapper
-        fields= ['full_name']
+        fields= ['id','full_name']
 class PropertySerializer(serializers.ModelSerializer):
     """Serializes the property model to convert it to useable json"""
     owner=PropertyOwnerSerializer()
