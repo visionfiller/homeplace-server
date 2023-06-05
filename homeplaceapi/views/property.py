@@ -1,4 +1,5 @@
 from django.http import HttpResponseServerError
+from django.db.models import Count, Q
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -36,29 +37,39 @@ class PropertyView(ViewSet):
             Response -- JSON serialized list of properties
         """
         properties = Property.objects.all()
+      
         owner_id = request.query_params.get('owner', None)
+        address = request.query_params.get('address', None)
         has_yard = request.query_params.get('has_yard', None)
         has_pool = request.query_params.get('has_pool', None)
         area_id = request.query_params.get('area', None)
         min_sq_feet = request.query_params.get('min_sq_feet', None)
+        filters={}
         if owner_id is not None:
-            properties = properties.filter(owner=owner_id)
+            filters['owner']= owner_id
+        if address is not None:
+            filters['address__icontains'] = address
         if has_yard is not None:
-            properties = properties.filter(yard=True)
+            filters['yard'] = True
         if has_pool is not None:
-            properties = properties.filter(pool=True)
+            filters['pool'] = True
         if min_sq_feet is not None:
-            properties = properties.filter(square_footage__gte=min_sq_feet)
+           filters['square_footage__gte'] =min_sq_feet
         if area_id is not None:
-            properties = properties.filter(area=area_id)
+            filters['area']=area_id
         for property_ in properties:
             try:
                 swapper = Swapper.objects.get(user=request.auth.user)
                 property_.user_favorited =  property_ in swapper.favorites.all()
             except Swapper.DoesNotExist:
                 properties = Property.objects.all()
-        serializer = PropertySerializer(properties, many=True)
-        return Response(serializer.data)
+        try: 
+            properties = Property.objects.filter(Q(**filters))
+            serializer = PropertySerializer(properties, many=True)
+            return Response(serializer.data)
+        except Property.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
     @action(methods=['GET'], detail=False, url_path="my_properties")
     def my_properties(self, request):
         """Get the current user's properties"""
@@ -93,27 +104,35 @@ class PropertyView(ViewSet):
         except ValidationError as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_400_BAD_REQUEST)
 
-#     def update(self, request, pk):
-#             """Handle PUT requests for a game
+    def update(self, request, pk):
+            """
+            updates the property object
+            """
+            try:
+                owner = Swapper.objects.get(user=request.auth.user)
+                area = Area.objects.get(pk=request.data['area'])
+                property_ = Property.objects.get(pk=pk, owner = owner)
+                property_.owner= owner
+                property_.area= area
+                property_.address = request.data['address']
+                property_.image=request.data['image']
+                property_.yard=request.data['yard']
+                property_.square_footage= request.data['square_footage']
+                property_.pool=request.data['pool']
+                property_.save()
 
-#             Returns:
-#                 Response -- Empty body with 204 status code
-#             """
-#             varietal_region = VarietalRegion.objects.get(pk=pk)
-#             acidity = Acidity.objects.get(pk=request.data['acidity'])
-#             dryness = Dryness.objects.get(pk=request.data['dryness'])
-#             body = Body.objects.get(pk=request.data['body'])
-#             varietal_region.acidity = acidity
-#             varietal_region.dryness = dryness
-#             varietal_region.body = body
-#             varietal_region.save()
-
-#             return Response(None, status=status.HTTP_204_NO_CONTENT)
+                return Response(None, status=status.HTTP_204_NO_CONTENT)
+            except Property.DoesNotExist as ex:
+                return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
     def destroy(self, request, pk):
         """delete property"""
-        property_ = Property.objects.get(pk=pk)
-        property_.delete()
-        return Response(None, status=status.HTTP_204_NO_CONTENT) 
+        owner = Swapper.objects.get(user=request.auth.user)
+        try:
+            property_ = Property.objects.get(pk=pk, owner=owner)
+            property_.delete()
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except Property.DoesNotExist as ex:
+                return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 
     @action(methods=['post'], detail=True)    
     def favorite(self, request, pk):

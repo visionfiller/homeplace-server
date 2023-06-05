@@ -11,6 +11,7 @@ class PropertySerializer(serializers.ModelSerializer):
     class Meta:
         model = Property
         fields = ('id', 'owner', 'area', 'address', 'image', 'yard', 'pool', 'square_footage', 'user_favorited', 'ratings')
+        depth=1
         
         
 class CreatePropertySerializer(serializers.ModelSerializer):
