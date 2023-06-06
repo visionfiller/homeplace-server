@@ -22,6 +22,8 @@ class SwapperView(ViewSet):
             properties = Property.objects.all()
             for owner_property in owner_properties:
                 swapper.has_listing = owner_property in properties
+                swapper.properties.set(owner_properties)
+            
             serializer = SwapperSerializer(swapper)
             return Response(serializer.data)
         except Swapper.DoesNotExist as ex:

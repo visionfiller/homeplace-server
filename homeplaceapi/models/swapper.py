@@ -7,6 +7,7 @@ class Swapper(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     area = models.ForeignKey("Area", on_delete=models.CASCADE )
     favorites = models.ManyToManyField("Property", through="Favorite", related_name="swapper_favorites")
+    properties = models.ManyToManyField("Property", related_name="swapper_properties")
 
     @property
     def full_name(self):

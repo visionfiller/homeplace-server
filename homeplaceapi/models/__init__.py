@@ -6,3 +6,4 @@ from .reservation import Reservation
 from .paymenttype import PaymentType
 from .rating import Rating
 from .favorite import Favorite
+

@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework import serializers, status
-from homeplaceapi.models import Property, Swapper, Area
+from homeplaceapi.models import Property, Swapper, Area, Reservation, PaymentType
 from homeplaceapi.serializers import PropertySerializer
 
 
@@ -140,6 +140,7 @@ class PropertyView(ViewSet):
         swapper = Swapper.objects.get(user=request.auth.user)
         swapper.favorites.add(property_)
         return Response({'message': 'Favorited Added'}, status=status.HTTP_201_CREATED)
+
 #     @action(methods=['delete'], detail=True)
 #     def unfavorite(self, request, pk):
 #             """Post request for a user to sign up for an event"""
@@ -148,7 +149,20 @@ class PropertyView(ViewSet):
 #             varietal_region = VarietalRegion.objects.get(pk=pk)
 #             customer.favorites.remove(varietal_region)
 #             return Response({'message': 'Unfavorited'}, status=status.HTTP_204_NO_CONTENT)        
-
+    @action(methods=['post'], detail=True)    
+    def make_reservation(self, request, pk):
+        property_ = Property.objects.get(pk=pk)
+        swapper = Swapper.objects.get(user=request.auth.user)
+        reservation = Reservation.objects.create(
+            property=property_,
+            swapper=swapper,
+       
+            start_date= request.data['start_date'],
+            end_date= request.data['end_date'],
+            status= "Submitted",
+            completed= False
+        )
+        return Response({'message': 'Reservation Submitted'}, status=status.HTTP_201_CREATED)
 #     # @action(methods=['delete'], detail=True)
 #     # def unsubscribe(self, request, pk):
 #     #     subscription = Subscription.objects.get(author=pk, follower=request.auth.user.id)
