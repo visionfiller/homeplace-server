@@ -5,7 +5,6 @@
         "fields": {
             "swapper": 2,
            "property": 1,
-           "payment_type": 3,
            "start_date": "2023-07-01",
            "end_date": "2023-07-09"
 
