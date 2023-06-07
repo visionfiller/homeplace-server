@@ -3,7 +3,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import serializers, status
-from homeplaceapi.models import Area
+from homeplaceapi.models import Area, City
 from homeplaceapi.serializers import AreaSerializer
 
 
@@ -35,5 +35,18 @@ class AreaView(ViewSet):
             areas = areas.filter(city=city_id)
         serializer = AreaSerializer(areas, many=True)
         return Response(serializer.data)
-       
+    def create(self, request):
+        """Create a new product for the current user's store"""
+        city = City.objects.get(pk=request.data['city'])
+
+        try:
+            new_area = Area.objects.create(
+                city=city,
+                neighborhood = request.data['neighborhood']
+                
+            )
+            serializer = AreaSerializer(new_area)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except City.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_400_BAD_REQUEST)
         
