@@ -56,7 +56,7 @@ def register_user(request):
     )
 
     # Now save the extra info in the homeplaceapi_swapper table
-    area = Area.objects.get(pk=request.data['area'])
+    area = Area.objects.get(pk=1)
     swapper = Swapper.objects.create(
         area = area,
         user=new_user

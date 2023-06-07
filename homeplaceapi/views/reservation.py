@@ -30,6 +30,10 @@ class ReservationView(ViewSet):
             Response -- JSON serialized list of properties
         """
         reservations = Reservation.objects.all()
+        swapper_id = request.query_params.get('swapper', None)
+
+        if swapper_id is not None:
+            reservations = reservations.filter(swapper=swapper_id)
         serializer = ReservationSerializer(reservations, many=True)
         return Response(serializer.data)
     def destroy(self, request, pk):
@@ -50,7 +54,6 @@ class ReservationView(ViewSet):
         properties = Property.objects.filter(owner__user=request.auth.user)
         swaps = Reservation.objects.filter(property__in=properties)
         status_id = request.query_params.get('status', None)
-
 
         if status_id is not None:
             swaps = swaps.filter(status__icontains = status_id)

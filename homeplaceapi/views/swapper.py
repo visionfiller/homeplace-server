@@ -41,8 +41,7 @@ class SwapperView(ViewSet):
             properties = Property.objects.all()
             for owner_property in owner_properties:
                 swapper.has_listing = owner_property in properties
+                swapper.properties.set(owner_properties)
 
         serializer = SwapperSerializer(swappers, many=True)
         return Response(serializer.data)
-       
-        
