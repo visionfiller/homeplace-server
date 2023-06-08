@@ -31,9 +31,12 @@ class ReservationView(ViewSet):
         """
         reservations = Reservation.objects.all()
         swapper_id = request.query_params.get('swapper', None)
+        property_id = request.query_params.get('property', None)
 
         if swapper_id is not None:
             reservations = reservations.filter(swapper=swapper_id)
+        if property_id is not None:
+            reservations = reservations.filter(property=property_id)
         serializer = ReservationSerializer(reservations, many=True)
         return Response(serializer.data)
     def destroy(self, request, pk):
