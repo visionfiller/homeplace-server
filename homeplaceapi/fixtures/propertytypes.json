@@ -1,0 +1,36 @@
+[
+    {
+        "model": "homeplaceapi.propertytype",
+        "pk": 1,
+        "fields": {
+           "name": "Single Family Home"
+        }
+    },
+    {
+        "model": "homeplaceapi.propertytype",
+        "pk": 2,
+        "fields": {
+            "name": "Apartment"
+        }
+    },
+    {
+        "model": "homeplaceapi.propertytype",
+        "pk": 3,
+        "fields": {
+            "name":"Townhome"
+        }
+    },
+    {
+        "model": "homeplaceapi.propertytype",
+        "pk": 4,
+        "fields": {
+            "name":"Condominium"
+        }
+    },
+    {
+        "model": "homeplaceapi.propertytype",
+        "pk": 5,
+        "fields": {
+            "name":"Other"
+        }
+    }]

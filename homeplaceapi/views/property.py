@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework import serializers, status
-from homeplaceapi.models import Property, Swapper, Area, Reservation, PaymentType
+from homeplaceapi.models import Property, Swapper, Area, Reservation, PaymentType, PropertyType
 from homeplaceapi.serializers import PropertySerializer
 
 
@@ -44,6 +44,10 @@ class PropertyView(ViewSet):
         has_pool = request.query_params.get('has_pool', None)
         area_id = request.query_params.get('area', None)
         min_sq_feet = request.query_params.get('min_sq_feet', None)
+        property_type_id = request.query_params.get('property_type', None)
+        min_bathrooms = request.query_params.get('bathrooms', None)
+        min_bedrooms = request.query_params.get('bedrooms', None)
+
         filters={}
         if owner_id is not None:
             filters['owner']= owner_id
@@ -55,8 +59,14 @@ class PropertyView(ViewSet):
             filters['pool'] = True
         if min_sq_feet is not None:
            filters['square_footage__gte'] =min_sq_feet
+        if min_bathrooms is not None:
+           filters['bathrooms__gte'] =min_bathrooms
+        if min_bedrooms is not None:
+           filters['bedrooms__gte'] =min_bedrooms
         if area_id is not None:
             filters['area']=area_id
+        if property_type_id is not None:
+            filters['property_type']=property_type_id
         for property_ in properties:
             try:
                 swapper = Swapper.objects.get(user=request.auth.user)
@@ -70,13 +80,13 @@ class PropertyView(ViewSet):
         except Property.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 
-    @action(methods=['GET'], detail=False, url_path="my_properties")
-    def my_properties(self, request):
+    @action(methods=['GET'], detail=False, url_path="my_property")
+    def my_property(self, request):
         """Get the current user's properties"""
         try:
             swapper = Swapper.objects.get(user=request.auth.user)
-            properties = Property.objects.filter(owner=swapper)
-            serializer = PropertySerializer(properties, many=True)
+            properties = Property.objects.get(owner=swapper)
+            serializer = PropertySerializer(properties, many=False)
             return Response(serializer.data)
         except Swapper.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
@@ -88,13 +98,17 @@ class PropertyView(ViewSet):
         """Create a new product for the current user's store"""
         owner = Swapper.objects.get(user=request.auth.user)
         area = Area.objects.get(pk=request.data['area'])
+        property_type = PropertyType.objects.get(pk=request.data['property_type'])
 
         try:
             new_property = Property.objects.create(
                 owner = owner,
                 area= area,
+                property_type = property_type,
                 address = request.data['address'],
                 image=request.data['image'],
+                bedrooms = request.data['bedrooms'],
+                bathrooms= request.data['bathrooms'],
                 yard=request.data['yard'],
                 square_footage= request.data['square_footage'],
                 pool=request.data['pool'],
@@ -111,9 +125,13 @@ class PropertyView(ViewSet):
             try:
                 owner = Swapper.objects.get(user=request.auth.user)
                 area = Area.objects.get(pk=request.data['area'])
+                property_type = PropertyType.objects.get(pk=request.data['property_type'])
                 property_ = Property.objects.get(pk=pk, owner = owner)
                 property_.owner= owner
                 property_.area= area
+                property_.property_type = property_type
+                property_.bedrooms = request.data['bedrooms']
+                property_.bathrooms= request.data['bathrooms']
                 property_.address = request.data['address']
                 property_.image=request.data['image']
                 property_.yard=request.data['yard']
@@ -141,14 +159,14 @@ class PropertyView(ViewSet):
         swapper.favorites.add(property_)
         return Response({'message': 'Favorited Added'}, status=status.HTTP_201_CREATED)
 
-#     @action(methods=['delete'], detail=True)
-#     def unfavorite(self, request, pk):
-#             """Post request for a user to sign up for an event"""
-            
-#             customer = Customer.objects.get(user=request.auth.user)
-#             varietal_region = VarietalRegion.objects.get(pk=pk)
-#             customer.favorites.remove(varietal_region)
-#             return Response({'message': 'Unfavorited'}, status=status.HTTP_204_NO_CONTENT)        
+    @action(methods=['delete'], detail=True)
+    def unfavorite(self, request, pk):
+        """Post request for a user to sign up for an event"""
+        property_ = Property.objects.get(pk=pk)
+        swapper = Swapper.objects.get(user=request.auth.user)
+        swapper.favorites.remove(property_)
+        return Response({'message': 'Unfavorited'}, status=status.HTTP_204_NO_CONTENT) 
+
     @action(methods=['post'], detail=True)    
     def make_reservation(self, request, pk):
         property_ = Property.objects.get(pk=pk)

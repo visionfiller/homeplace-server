@@ -18,7 +18,7 @@ class PropertySerializer(serializers.ModelSerializer):
     ratings = PropertyRatingSerializer(many=True)
     class Meta:
         model = Property
-        fields = ('id', 'owner', 'area', 'address', 'image', 'yard', 'pool', 'square_footage', 'user_favorited', 'ratings')
+        fields = ('id', 'owner', 'area', 'address', 'image', 'yard', 'pool', 'square_footage', 'user_favorited', 'ratings', 'property_type', 'bathrooms', 'bedrooms')
         depth=1
         
         
@@ -26,5 +26,5 @@ class CreatePropertySerializer(serializers.ModelSerializer):
     """Serializes the property model to convert it to useable json"""
     class Meta:
         model = Property
-        fields = ['id', 'owner', 'area', 'address', 'image', 'yard', 'pool', 'square_footage']
+        fields = ['id', 'owner', 'area', 'address', 'image', 'yard', 'pool', 'square_footage','property_type', 'bathrooms', 'bedrooms']
         
