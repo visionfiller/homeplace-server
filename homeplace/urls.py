@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import include
 from django.urls import path
-from homeplaceapi.views import register_user, login_user, PropertyView, SwapperView, AreaView, PaymentTypeView, ReservationView
+from homeplaceapi.views import register_user, login_user, PropertyView, SwapperView, AreaView, PaymentTypeView, ReservationView, PropertyTypeView
 from rest_framework import routers
 
 router = routers.DefaultRouter(trailing_slash=False)
@@ -26,6 +26,7 @@ router.register(r'swappers',SwapperView, 'swapper')
 router.register(r'areas',AreaView, 'area')
 router.register(r'reservations',ReservationView, 'reservation')
 router.register(r'paymenttypes',PaymentTypeView, 'paymenttype')
+router.register(r'propertytypes',PropertyTypeView, 'propertytype')
 
 urlpatterns = [
     path('register', register_user),

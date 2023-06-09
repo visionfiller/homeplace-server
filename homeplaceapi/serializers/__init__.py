@@ -4,3 +4,4 @@ from .area_serializer import AreaSerializer
 from .city_serializer import CitySerializer
 from .paymenttype_serializer import PaymentTypeSerializer
 from .reservation_serializer import ReservationSerializer
+from .property_type_serializer import PropertyTypeSerializer
