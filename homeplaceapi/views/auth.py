@@ -65,5 +65,9 @@ def register_user(request):
     # Use the REST Framework's token generator on the new user account
     token = Token.objects.create(user=swapper.user)
     # Return the token to the client
-    data = { 'token': token.key }
+    data = { 'token': token.key,
+    'valid': True,
+    'swapper_id': swapper.id,
+            'area_id': swapper.area.id
+     }
     return Response(data)

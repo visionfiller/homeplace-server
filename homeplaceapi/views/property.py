@@ -5,12 +5,22 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework import serializers, status
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from homeplaceapi.models import Property, Swapper, Area, Reservation, PaymentType, PropertyType
 from homeplaceapi.serializers import PropertySerializer
 
 
+
+
 class PropertyView(ViewSet):
     """HomePlace Property View"""
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            # AllowAny permission for GET requests
+            return [AllowAny()]
+        else:
+            # IsAuthenticated permission for other methods (POST, PUT, DELETE)
+            return [IsAuthenticated()]
 
     def retrieve(self, request, pk):
         """Handle GET requests for single property
@@ -19,12 +29,14 @@ class PropertyView(ViewSet):
             Response -- JSON serialized property
         """
         try:
+            user = request.user if request.user.is_authenticated else None
             property_ = Property.objects.get(pk=pk)
-            try:
-                swapper = Swapper.objects.get(user=request.auth.user)
-                property_.user_favorited =  property_ in swapper.favorites.all()
-            except Swapper.DoesNotExist:
-                property_ = Property.objects.get(pk=pk)
+            if user is not None:
+                    try:
+                        swapper = Swapper.objects.get(user=user)
+                        property_.user_favorited = property_ in swapper.favorites.all()
+                    except Swapper.DoesNotExist:
+                        property_.user_favorited = False
             serializer = PropertySerializer(property_)
             return Response(serializer.data)
         except Property.DoesNotExist as ex:
@@ -36,6 +48,7 @@ class PropertyView(ViewSet):
         Returns:
             Response -- JSON serialized list of properties
         """
+        user = request.user if request.user.is_authenticated else None
         properties = Property.objects.all()
       
         owner_id = request.query_params.get('owner', None)
@@ -67,12 +80,13 @@ class PropertyView(ViewSet):
             filters['area']=area_id
         if property_type_id is not None:
             filters['property_type']=property_type_id
-        for property_ in properties:
-            try:
-                swapper = Swapper.objects.get(user=request.auth.user)
-                property_.user_favorited =  property_ in swapper.favorites.all()
-            except Swapper.DoesNotExist:
-                properties = Property.objects.all()
+        if user is not None:
+            for property_ in properties:
+                try:
+                    swapper = Swapper.objects.get(user=user)
+                    property_.user_favorited = property_ in swapper.favorites.all()
+                except Swapper.DoesNotExist:
+                    property_.user_favorited = False
         try: 
             properties = Property.objects.filter(Q(**filters))
             serializer = PropertySerializer(properties, many=True)

@@ -3,12 +3,22 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import serializers, status
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from homeplaceapi.models import Area, City
 from homeplaceapi.serializers import AreaSerializer
 
 
+
+
 class AreaView(ViewSet):
     """HomePlace Area View"""
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            # AllowAny permission for GET requests
+            return [AllowAny()]
+        else:
+            # IsAuthenticated permission for other methods (POST, PUT, DELETE)
+            return [IsAuthenticated()]
 
     def retrieve(self, request, pk):
         """Handle GET requests for single area
