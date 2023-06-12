@@ -32,11 +32,14 @@ class ReservationView(ViewSet):
         reservations = Reservation.objects.all()
         swapper_id = request.query_params.get('swapper', None)
         property_id = request.query_params.get('property', None)
+        swapper_property=request.query_params.get('swapper_property', None)
 
         if swapper_id is not None:
             reservations = reservations.filter(swapper=swapper_id)
         if property_id is not None:
             reservations = reservations.filter(property=property_id)
+        if swapper_property is not None:
+            reservations = reservations.filter(swapper__property=swapper_property)
         serializer = ReservationSerializer(reservations, many=True)
         return Response(serializer.data)
     def destroy(self, request, pk):
@@ -70,6 +73,29 @@ class ReservationView(ViewSet):
             swapper = Swapper.objects.get(user=request.auth.user)
             reservation= Reservation.objects.get(pk=pk, property__owner = swapper)
             reservation.status = "Approved"
+            reservation.save()
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except Reservation.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(methods=['put'], detail=True)       
+    def deny(self, request, pk):
+        """approve a submitted request"""
+        try:
+            swapper = Swapper.objects.get(user=request.auth.user)
+            reservation= Reservation.objects.get(pk=pk, property__owner = swapper)
+            reservation.status = "Denied"
+            reservation.save()
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except Reservation.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+    @action(methods=['put'], detail=True)       
+    def complete(self, request, pk):
+        """approve a submitted request"""
+        try:
+            swapper = Swapper.objects.get(user=request.auth.user)
+            reservation= Reservation.objects.get(pk=pk, property__owner = swapper)
+            reservation.status = "Denied"
             reservation.save()
             return Response(None, status=status.HTTP_204_NO_CONTENT)
         except Reservation.DoesNotExist as ex:
