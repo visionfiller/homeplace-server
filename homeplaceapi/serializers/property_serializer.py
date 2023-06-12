@@ -18,7 +18,7 @@ class PropertySerializer(serializers.ModelSerializer):
     ratings = PropertyRatingSerializer(many=True)
     class Meta:
         model = Property
-        fields = ('id', 'owner', 'area', 'address', 'image', 'yard', 'pool', 'square_footage', 'user_favorited', 'ratings', 'property_type', 'bathrooms', 'bedrooms')
+        fields = ('id', 'owner', 'area', 'address', 'image', 'yard', 'pool', 'square_footage', 'user_favorited', 'ratings', 'average_rating','property_type', 'bathrooms', 'bedrooms')
         depth=1
         
         

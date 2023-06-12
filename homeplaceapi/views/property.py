@@ -6,7 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework import serializers, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from homeplaceapi.models import Property, Swapper, Area, Reservation, PaymentType, PropertyType
+from homeplaceapi.models import Property, Swapper, Area, Reservation, PaymentType, PropertyType, Rating
 from homeplaceapi.serializers import PropertySerializer
 
 
@@ -27,16 +27,18 @@ class PropertyView(ViewSet):
         
         Returns:
             Response -- JSON serialized property
+            NOT WORKING BC IT IS NEEDING AN AUTH USER
         """
         try:
             user = request.user if request.user.is_authenticated else None
             property_ = Property.objects.get(pk=pk)
             if user is not None:
-                    try:
-                        swapper = Swapper.objects.get(user=user)
-                        property_.user_favorited = property_ in swapper.favorites.all()
-                    except Swapper.DoesNotExist:
-                        property_.user_favorited = False
+                try:
+                    swapper = Swapper.objects.get(user=request.auth.user)
+                    print(swapper)
+                    property_.user_favorited = property_ in swapper.favorites.all()
+                except Swapper.DoesNotExist:
+                    property_.user_favorited = False
             serializer = PropertySerializer(property_)
             return Response(serializer.data)
         except Property.DoesNotExist as ex:
@@ -84,6 +86,7 @@ class PropertyView(ViewSet):
             for property_ in properties:
                 try:
                     swapper = Swapper.objects.get(user=user)
+                   
                     property_.user_favorited = property_ in swapper.favorites.all()
                 except Swapper.DoesNotExist:
                     property_.user_favorited = False
@@ -195,19 +198,32 @@ class PropertyView(ViewSet):
             completed= False
         )
         return Response({'message': 'Reservation Submitted'}, status=status.HTTP_201_CREATED)
-#     # @action(methods=['delete'], detail=True)
-#     # def unsubscribe(self, request, pk):
-#     #     subscription = Subscription.objects.get(author=pk, follower=request.auth.user.id)
-#     #     subscription.delete()
-#     #     return Response({'message': 'Unsubscribed'}, status=status.HTTP_204_NO_CONTENT) 
-# class CreateVarietalRegionSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = VarietalRegion
-#         fields = ['id', 'varietal', 'region', 'body', 'dryness', 'acidity']
-# class VarietalRegionSerializer(serializers.ModelSerializer):
-#     """JSON serializer for game types
-#     """
-#     class Meta:
-#         model = VarietalRegion
-#         fields = ('id', 'varietal', 'region', 'body', 'dryness', 'acidity', 'is_favorite')
-#         depth =1
+    @action(methods=['delete'], detail=True)    
+    def cancel_reservation(self, request, pk):
+        """cancel a reservation"""
+        property_ = Property.objects.get(pk=pk)
+        swapper = Swapper.objects.get(user=request.auth.user)
+        reservation = Reservation.objects.get(property=property_, swapper=swapper)
+        reservation.delete()
+        return Response({'message': 'Reservation Cancelled'}, status=status.HTTP_204_NO_CONTENT)
+    @action(methods=['post'], detail=True)
+    def rate_property(self, request, pk):
+        """Rate a property"""
+        property_ = Property.objects.get(pk=pk)
+        swapper = Swapper.objects.get(user=request.auth.user)
+
+        try:
+            rating = Rating.objects.get(
+                swapper=swapper, property=property_)
+            rating.score = request.data['score']
+            rating.review = request.data['review']
+            rating.save()
+        except Rating.DoesNotExist:
+            rating = Rating.objects.create(
+                swapper = swapper,
+                property=property_,
+                score=request.data['score'],
+                review=request.data['review']
+            )
+
+        return Response({'message': 'Rating added'}, status=status.HTTP_201_CREATED)
