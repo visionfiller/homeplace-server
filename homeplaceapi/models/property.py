@@ -9,6 +9,7 @@ class Property(models.Model):
     property_type = models.ForeignKey("PropertyType", on_delete=models.CASCADE, null=True, blank=True)
     bedrooms = models.IntegerField(null=True, blank=True)
     bathrooms = models.IntegerField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     address = models.CharField(max_length=100)
     image = models.CharField(max_length=100)
     yard = models.BooleanField()
