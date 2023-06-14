@@ -95,7 +95,7 @@ class ReservationView(ViewSet):
         try:
             swapper = Swapper.objects.get(user=request.auth.user)
             reservation= Reservation.objects.get(pk=pk, property__owner = swapper)
-            reservation.status = "Denied"
+            reservation.complete= True
             reservation.save()
             return Response(None, status=status.HTTP_204_NO_CONTENT)
         except Reservation.DoesNotExist as ex:

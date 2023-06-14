@@ -62,12 +62,15 @@ class PropertyView(ViewSet):
         property_type_id = request.query_params.get('property_type', None)
         min_bathrooms = request.query_params.get('bathrooms', None)
         min_bedrooms = request.query_params.get('bedrooms', None)
+        description = request.query_params.get('description', None)
 
         filters={}
         if owner_id is not None:
             filters['owner']= owner_id
         if address is not None:
             filters['address__icontains'] = address
+        if description is not None:
+            filters['description__icontains'] = description
         if has_yard is not None:
             filters['yard'] = True
         if has_pool is not None:
@@ -124,6 +127,7 @@ class PropertyView(ViewSet):
                 property_type = property_type,
                 address = request.data['address'],
                 image=request.data['image'],
+                description= request.data['description'],
                 bedrooms = request.data['bedrooms'],
                 bathrooms= request.data['bathrooms'],
                 yard=request.data['yard'],
@@ -149,6 +153,7 @@ class PropertyView(ViewSet):
                 property_.property_type = property_type
                 property_.bedrooms = request.data['bedrooms']
                 property_.bathrooms= request.data['bathrooms']
+                property_.description= request.data['description']
                 property_.address = request.data['address']
                 property_.image=request.data['image']
                 property_.yard=request.data['yard']
