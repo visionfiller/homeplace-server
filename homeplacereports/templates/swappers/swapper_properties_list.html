@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title> HomePlace Reports</title>
+  </head>
+  <body>
+    <h1>Swapper Properties</h1>
+
+    {% for swapper in swapper_properties_list %}
+        <h2>{{ swapper.full_name }}</h2>
+        <ol>
+            {% for property in swapper.property_ %}
+            <li>
+                Address {{ property.address}}
+            </li>
+            {% endfor %}
+        </ol>
+    {% endfor %}
+  </body>
+</html>

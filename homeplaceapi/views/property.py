@@ -2,6 +2,7 @@ from django.http import HttpResponseServerError
 from django.db.models import Count, Q
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework import serializers, status
@@ -168,12 +169,20 @@ class PropertyView(ViewSet):
         """delete property"""
         owner = Swapper.objects.get(user=request.auth.user)
         try:
-            property_ = Property.objects.get(pk=pk, owner=owner)
+            property_ = Property.objects.get(pk=pk)
+            
+            # Check if the owner of the property matches the authorized user
+            if property_.owner != owner:
+                raise PermissionDenied()
+            
             property_.delete()
             return Response(None, status=status.HTTP_204_NO_CONTENT)
+        
         except Property.DoesNotExist as ex:
-                return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
-
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+        
+        except PermissionDenied:
+            return Response({'message': 'You are not authorized to delete this property.'}, status=status.HTTP_403_FORBIDDEN)
     @action(methods=['post'], detail=True)    
     def favorite(self, request, pk):
         property_ = Property.objects.get(pk=pk)
@@ -208,9 +217,16 @@ class PropertyView(ViewSet):
         """cancel a reservation"""
         property_ = Property.objects.get(pk=pk)
         swapper = Swapper.objects.get(user=request.auth.user)
-        reservation = Reservation.objects.get(property=property_, swapper=swapper)
+        reservation = Reservation.objects.filter(property=property_, swapper=swapper).first()
+    
+        if not reservation:
+            return Response({'message': 'Reservation not found.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        if reservation.swapper != swapper:
+            raise PermissionDenied()
+        
         reservation.delete()
-        return Response({'message': 'Reservation Cancelled'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'message': 'Reservation cancelled.'}, status=status.HTTP_204_NO_CONTENT)
     @action(methods=['post'], detail=True)
     def rate_property(self, request, pk):
         """Rate a property"""
