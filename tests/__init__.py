@@ -1,0 +1,2 @@
+from .property_tests import PropertyTests
+from .reservation_tests import ReservationTests
