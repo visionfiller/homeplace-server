@@ -57,7 +57,8 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
     'http://127.0.0.1:3000',
-    'https://homeplace-client-fa6c24b97882.herokuapp.com'
+    'https://homeplace-client-fa6c24b97882.herokuapp.com',
+    'http://homeplace.live'
 )
 
 
