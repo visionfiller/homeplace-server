@@ -90,11 +90,22 @@ class ReservationView(ViewSet):
         except Reservation.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
     @action(methods=['put'], detail=True)       
-    def complete(self, request, pk):
+    def ownercomplete(self, request, pk):
         """approve a submitted request"""
         try:
             swapper = Swapper.objects.get(user=request.auth.user)
             reservation= Reservation.objects.get(pk=pk, property__owner = swapper)
+            reservation.complete= True
+            reservation.save()
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except Reservation.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+    @action(methods=['put'], detail=True)       
+    def swappercomplete(self, request, pk):
+        """approve a submitted request"""
+        try:
+            swapper = Swapper.objects.get(user=request.auth.user)
+            reservation= Reservation.objects.get(pk=pk, swapper = swapper)
             reservation.complete= True
             reservation.save()
             return Response(None, status=status.HTTP_204_NO_CONTENT)
