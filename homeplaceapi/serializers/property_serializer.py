@@ -4,7 +4,7 @@ from homeplaceapi.models import Property, Swapper, Rating
 class PropertyOwnerSerializer(serializers.ModelSerializer):
     class Meta: 
         model= Swapper
-        fields= ['id','full_name']
+        fields= ['id','full_name','contact_email']
 class PropertyRatingSerializer(serializers.ModelSerializer):
     swapper = PropertyOwnerSerializer()
     class Meta:
