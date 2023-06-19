@@ -8,5 +8,5 @@ class SwapperSerializer(serializers.ModelSerializer):
     properties= PropertySerializer(many=True)
     class Meta:
         model = Swapper
-        fields = ('id', 'user', 'area', 'full_name', 'has_listing', 'favorites', 'properties')
+        fields = ('id', 'user', 'area', 'full_name','contact_email', 'has_listing', 'favorites', 'properties')
         

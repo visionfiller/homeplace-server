@@ -11,7 +11,7 @@ class Property(models.Model):
     bathrooms = models.IntegerField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     address = models.CharField(max_length=100)
-    image = models.CharField(max_length=100)
+    image = models.TextField(max_length=100)
     yard = models.BooleanField()
     pool = models.BooleanField()
     square_footage = models.IntegerField()
