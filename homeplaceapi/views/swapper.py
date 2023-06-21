@@ -60,6 +60,11 @@ class SwapperView(ViewSet):
         """Get the current user's properties"""
         try:
             swapper = Swapper.objects.get(user=request.auth.user)
+            owner_properties = Property.objects.filter(owner=swapper)
+            properties = Property.objects.all()
+            for owner_property in owner_properties:
+                swapper.has_listing = owner_property in properties
+                swapper.properties.set(owner_properties)
             serializer = SwapperSerializer(swapper, many=False)
             return Response(serializer.data)
         except Swapper.DoesNotExist as ex:
