@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from homeplaceapi.models import Property, Swapper, Rating
+from .area_serializer import AreaSerializer
+
 
 class PropertyOwnerSerializer(serializers.ModelSerializer):
     class Meta: 
@@ -16,6 +18,7 @@ class PropertySerializer(serializers.ModelSerializer):
     """Serializes the property model to convert it to useable json"""
     owner=PropertyOwnerSerializer()
     ratings = PropertyRatingSerializer(many=True)
+    area = AreaSerializer(many=False)
     class Meta:
         model = Property
         fields = ('id', 'owner', 'area', 'address', 'image', 'yard', 'pool', 'square_footage', 'user_favorited', 'ratings', 'average_rating','property_type', 'bathrooms', 'bedrooms', 'description')
