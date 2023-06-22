@@ -8,6 +8,7 @@ class AreaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Area
         fields = ('id','neighborhood', 'city')
+        depth=1
         
 class CreateAreaSerializer(serializers.ModelSerializer):
     """Serializes the Area model to convert it to useable json"""

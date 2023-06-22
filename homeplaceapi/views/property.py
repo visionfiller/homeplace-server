@@ -55,6 +55,7 @@ class PropertyView(ViewSet):
         properties = Property.objects.all()
       
         owner_id = request.query_params.get('owner', None)
+        city_id = request.query_params.get('city', None)
         address = request.query_params.get('address', None)
         has_yard = request.query_params.get('has_yard', None)
         has_pool = request.query_params.get('has_pool', None)
@@ -86,6 +87,8 @@ class PropertyView(ViewSet):
             filters['area']=area_id
         if property_type_id is not None:
             filters['property_type']=property_type_id
+        if city_id is not None:
+            filters['area__city']=city_id
         if user is not None:
             for property_ in properties:
                 try:
